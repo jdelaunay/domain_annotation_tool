@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annotation Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Annotate Text</h1>
+        <div class="text-container">
+            <div class="text-section">
+                <strong>Title:</strong>
+                <p>{{ text['title'] }}</p>
+            </div>
+            <div class="text-section">
+                <strong>Keywords:</strong>
+                <p>{{ text['keywords'] }}</p>
+            </div>
+            <div class="text-section">
+                <strong>Abstract:</strong>
+                <p>{{ text['abstract'] }}</p>
+            </div>
+        </div>
+        <form action="{{ url_for('classify') }}" method="POST">
+            <div class="button-group">
+                {% for class in class_options %}
+                <button type="button" class="class-btn" id="btn_{{ class }}" onclick="toggleClass('{{ class }}')">
+                    {{ class }}
+                </button>
+                {% endfor %}
+            </div>
+            <input type="hidden" name="classification" id="classification" value="">
+            <button type="submit" class="submit-btn">Submit Classification</button>
+        </form>
+        <div class="navigation">
+            <a href="{{ url_for('navigate', direction='left') }}" class="nav-btn">Previous</a>
+            <span>{{ current_index }} of {{ total }}</span>
+            <a href="{{ url_for('navigate', direction='right') }}" class="nav-btn">Next</a>
+        </div>
+        <a href="{{ url_for('menu') }}" class="back-btn">Go to Menu</a>
+    </div>
+
+    <script>
+        // Store selected classes
+        let selectedClasses = [];
+
+        // Toggle the selected class on button click
+        function toggleClass(className) {
+            const btn = document.getElementById('btn_' + className);
+            if (selectedClasses.includes(className)) {
+                selectedClasses = selectedClasses.filter(item => item !== className);
+                btn.classList.remove('selected');
+            } else {
+                selectedClasses.push(className);
+                btn.classList.add('selected');
+            }
+            document.getElementById('classification').value = selectedClasses.join(',');
+        }
+    </script>
+</body>
+
+</html>

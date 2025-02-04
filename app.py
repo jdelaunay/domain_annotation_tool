@@ -1,0 +1,122 @@
+import os
+import json
+import pandas as pd
+from flask import Flask, render_template, request, redirect, url_for
+import threading
+import time
+
+app = Flask(__name__)
+
+# Load the dataset and initialize variables
+dataset_path = "./data/sample.json"
+save_path = "annotations.json"
+
+dataset = pd.read_json(dataset_path)
+annotations = [[] for _ in range(len(dataset))]
+current_index = 0
+
+# List of available classes
+class_options = [
+    "Ecology",
+    "Sedimentology",
+    "Geomorphology",
+    "Oceanography",
+    "Hydrology",
+    "Climatology",
+    "Engineering",
+    "Social Sciences & Humanities",
+    "Chemistry",
+    "Policy and Governance",
+    "Public Health",
+]
+
+# Load annotations if available
+if os.path.exists(save_path):
+    saved_data = pd.read_json(save_path, orient="records", lines=True)
+    annotations = saved_data["annotation"].tolist()
+    current_index = len([a for a in annotations if a])
+
+
+def save_annotations():
+    """Save annotations to the file."""
+    dataset["annotation"] = annotations
+    dataset.to_json(save_path, orient="records", lines=True)
+
+
+def auto_save():
+    """Auto-save annotations every 10 minutes."""
+    while True:
+        time.sleep(600)
+        save_annotations()
+
+
+# Start auto-saving in a background thread
+auto_save_thread = threading.Thread(target=auto_save, daemon=True)
+auto_save_thread.start()
+
+
+@app.route("/")
+def index():
+    """Render the main page with the current text."""
+    return render_template(
+        "index.html",
+        text=dataset.iloc[current_index],
+        current_index=current_index,
+        total=len(dataset),
+        class_options=class_options,
+    )
+
+
+@app.route("/classify", methods=["POST"])
+def classify():
+    """Handle the classification of text."""
+    global current_index
+    classifications = request.form.get("classification").split(",")
+    if classifications:
+        annotations[current_index] = classifications
+        current_index += 1
+        if current_index >= len(dataset):
+            save_annotations()
+            return render_template("done.html")
+    return redirect(url_for("index"))
+
+
+@app.route("/navigate/<direction>")
+def navigate(direction):
+    """Navigate through the dataset."""
+    global current_index
+    if direction == "left" and current_index > 0:
+        current_index -= 1
+    elif direction == "right" and current_index < len(dataset) - 1:
+        current_index += 1
+    return redirect(url_for("index"))
+
+
+def get_text(data):
+    """Format the text for display."""
+    text = f"Title: {data['title']}\n"
+    text += f"Keywords: {data['keywords']}\n"
+    text += f"Abstract: {data['abstract']}"
+    return text
+
+
+@app.route("/menu")
+def menu():
+    """Display the menu for selecting texts."""
+    menu_items = [
+        {"index": idx, "text": f"Text {idx + 1}", "classified": bool(annotations[idx])}
+        for idx in range(len(dataset))
+    ]
+    return render_template("menu.html", menu_items=menu_items)
+
+
+@app.route("/select/<int:index>")
+def select_text(index):
+    """Select a specific text to annotate."""
+    global current_index
+    current_index = index
+    return redirect(url_for("index"))
+
+
+if __name__ == "__main__":
+    app.run(debug=True, host="127.0.0.1", port=5000)

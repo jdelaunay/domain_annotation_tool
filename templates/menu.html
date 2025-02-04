@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Text to Annotate</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <div class="menu-container">
+        <h1>Select Text to Annotate</h1>
+        <div class="menu-grid">
+            {% for item in menu_items %}
+            <div class="menu-item {% if item.classified %}classified{% else %}unclassified{% endif %}">
+                <div class="menu-item-header">
+                    <span class="text-number">{{ item.text }}</span>
+                    <span
+                        class="status {% if item.classified %}classified-status{% else %}unclassified-status{% endif %}">
+                        {% if item.classified %}Classified{% else %}Unclassified{% endif %}
+                    </span>
+                </div>
+                <a href="{{ url_for('select_text', index=item.index) }}" class="select-btn">Select</a>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{{ url_for('index') }}" class="back-btn">Back to Annotating</a>
+    </div>
+</body>
+
+</html>
