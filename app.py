@@ -62,7 +62,7 @@ def index():
     return render_template(
         "index.html",
         text=dataset.iloc[current_index],
-        current_index=current_index,
+        current_index=current_index + 1,
         total=len(dataset),
         class_options=class_options,
     )
