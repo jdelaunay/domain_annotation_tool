@@ -34,7 +34,6 @@
                 {% endfor %}
             </div>
             <input type="hidden" name="classification" id="classification" value="">
-            <button type="submit" class="submit-btn">Submit Classification</button>
         </form>
         <div class="navigation">
             <a href="{{ url_for('navigate', direction='left') }}" class="nav-btn">Previous</a>
@@ -48,6 +47,20 @@
         // Store selected classes
         let selectedClasses = [];
 
+        // Load pre-existing classification if available
+        document.addEventListener("DOMContentLoaded", function () {
+            let existingClassification = "{{ text['annotation'] | join(',') }}".split(',');
+            if (existingClassification[0] !== "") {
+                selectedClasses = existingClassification;
+                selectedClasses.forEach(className => {
+                    const btn = document.getElementById('btn_' + className.trim());
+                    if (btn) {
+                        btn.classList.add('selected');
+                    }
+                });
+            }
+        });
+
         // Toggle the selected class on button click
         function toggleClass(className) {
             const btn = document.getElementById('btn_' + className);
@@ -59,8 +72,29 @@
                 btn.classList.add('selected');
             }
             document.getElementById('classification').value = selectedClasses.join(',');
+
+            // Auto-save after each modification
+            autoSave();
+        }
+
+        function autoSave() {
+            fetch("{{ url_for('autosave') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    classification: selectedClasses
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Auto-saved:", data.message);
+                })
+                .catch(error => console.error("Error saving annotation:", error));
         }
     </script>
 </body>
+
 
 </html>

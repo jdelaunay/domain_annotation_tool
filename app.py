@@ -1,7 +1,7 @@
 import os
 import json
 import pandas as pd
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import threading
 import time
 
@@ -116,6 +116,21 @@ def select_text(index):
     global current_index
     current_index = index
     return redirect(url_for("index"))
+
+
+@app.route("/autosave", methods=["POST"])
+def autosave():
+    """Auto-save annotations as soon as they are modified."""
+    global current_index
+    data = request.json
+    classification = data.get("classification", [])
+
+    if classification is not None:
+        annotations[current_index] = classification
+        save_annotations()
+        return jsonify({"message": "Saved successfully!"}), 200
+    else:
+        return jsonify({"error": "Invalid data"}), 400
 
 
 if __name__ == "__main__":
