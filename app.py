@@ -9,7 +9,8 @@ app = Flask(__name__)
 
 # Load the dataset and initialize variables
 dataset_path = "./data/sample.json"
-save_path = "annotations.json"
+os.makedirs("./annotations", exist_ok=True)
+save_path = "./annotations/annotations.json"
 
 dataset = pd.read_json(dataset_path)
 annotations = [[] for _ in range(len(dataset))]
