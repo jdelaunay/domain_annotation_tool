@@ -92,14 +92,6 @@ def navigate(direction):
     return redirect(url_for("index"))
 
 
-def get_text(data):
-    """Format the text for display."""
-    text = f"Title: {data['title']}\n"
-    text += f"Keywords: {data['keywords']}\n"
-    text += f"Abstract: {data['abstract']}"
-    return text
-
-
 @app.route("/menu")
 def menu():
     """Display the menu for selecting texts."""
