@@ -14,7 +14,7 @@ In this repo, we implement a tool for annotating scientific abstracts about coas
 - Policy and Governance
 - Public Health
 
-One abtsract might have multiple labels.
+One abstract might have multiple labels.
 
 The aim is to evaluate Llama on text classification into topics, multi-label.
 
@@ -24,6 +24,13 @@ Please install all the necessary libraries noted in [requirements.txt](./require
 ```
 pip install -r requirements.txt
 ```
+
+## How to use
+```
+python app.py
+```
+
+In the app, click on any class to attribute it to an abstract. The application has an autosave function, which means it will save at each modification. Your annotations will be available in `./annotations/annotations.json`. DO NOT DELETE THIS FILE, AS YOU WOULD LOSE ALL YOUR ANNOTATIONS.
 
 ## Contributors:
 
