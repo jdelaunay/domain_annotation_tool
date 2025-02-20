@@ -20,18 +20,19 @@ current_index = 0
 class_options = [
     "Biology",
     "Ecotoxicology",
-    "Geology",
     "Ecology",
+    "Oceanography",
     "Sedimentology",
     "Geomorphology",
-    "Oceanography",
+    "Geology (Others)",
     "Hydrology",
-    "Climatology",
+    "Climatology/Atmosphere",
     "Engineering",
-    "Social Sciences & Humanities",
     "Chemistry",
+    "Social Sciences & Humanities",
     "Policy and Governance",
     "Public Health",
+    "Education",
 ]
 
 # Load annotations if available
