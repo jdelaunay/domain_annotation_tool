@@ -18,6 +18,9 @@ current_index = 0
 
 # List of available classes
 class_options = [
+    "Biology",
+    "Ecotoxicology",
+    "Geology",
     "Ecology",
     "Sedimentology",
     "Geomorphology",
