@@ -12,9 +12,16 @@ dataset_path = "./data/sample.json"
 os.makedirs("./annotations", exist_ok=True)
 save_path = "./annotations/annotations.json"
 
-dataset = pd.read_json(dataset_path)
-annotations = [[] for _ in range(len(dataset))]
-current_index = 0
+# Load annotations if available
+if os.path.exists(save_path):
+    dataset = pd.read_json(save_path, orient="records", lines=True)
+    annotations = dataset["annotation"].tolist()
+    print(annotations)
+    current_index = len([a for a in annotations if a])
+else:
+    dataset = pd.read_json(dataset_path)
+    annotations = [[] for _ in range(len(dataset))]
+    current_index = 0
 
 # List of available classes
 class_options = [
@@ -34,12 +41,6 @@ class_options = [
     "Public Health",
     "Education",
 ]
-
-# Load annotations if available
-if os.path.exists(save_path):
-    saved_data = pd.read_json(save_path, orient="records", lines=True)
-    annotations = saved_data["annotation"].tolist()
-    current_index = len([a for a in annotations if a])
 
 
 def save_annotations():
