@@ -48,10 +48,20 @@ def save_annotations():
 
 
 def auto_save():
-    """Auto-save annotations every 10 minutes."""
+    """Auto-save annotations every 10 minutes and archive with datetime."""
     while True:
         time.sleep(600)
         save_annotations()
+        archive_save()
+
+
+def archive_save():
+    """Archive the current annotations with a timestamp."""
+    os.makedirs("./archives/", exist_ok=True)
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+    archive_path = f"./archives/annotations_{timestamp}.json"
+    dataset["annotation"] = annotations
+    dataset.to_json(archive_path, orient="records", lines=True)
 
 
 # Start auto-saving in a background thread
