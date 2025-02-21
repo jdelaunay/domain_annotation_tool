@@ -36,7 +36,7 @@ class_options = [
     "Climatology/Atmosphere",
     "Engineering",
     "Chemistry",
-    "Social Sciences & Humanities",
+    "Social Sciences and Humanities",
     "Policy and Governance",
     "Public Health",
     "Education",
